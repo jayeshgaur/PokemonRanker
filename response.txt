@@ -1,0 +1,23 @@
+Hey, I want to build a very quick fun project about Pokémon. On YouTube there are two main creators, Wolfie and another creator who make top 10s or top 20s of Pokémon by different types, categories (legendaries, starters, and so on).
+
+What I've realized is that a lot of this is based on analysis and I realized that even I would like to build a project or website that lets users configure different filters and then choose their top 20 Pokémon based on those filters.
+The most important thing is the filter options. For example:
+- specific type
+- pseudo-legendaries
+- only legendaries
+- starters
+- Gen 1, Gen 2, Gen 3, Gen 4
+There are many other categories, and I would like the project to support all of them
+The way the chooser works is we build a tournament-style knockout system, like a graph where users can see two options at a time and select one to move on to the next round. Winners from the previous round form groups of two again, creating a tournament tree structure that eventually leaves only one winner.
+This is helpful for the best Pokémon ranking, not a top 10. If I choose my first Pokémon in the first round, my second favorite could get eliminated right away because it was competing with my first choice. I do not have an answer for how to handle that.
+We can use multiple tournament formats. The only format I can think of that makes this easier is the one I described. Ideally it would be interactive, so I can see:
+- type moves
+- gen split by generations
+- stats
+I know that is a lot of information and I am not sure we can get it for free. We can also link to PokemonDB.net My favorite website for finding Pokémon information. I hope there is public, exportable data we can download for all of this Pokémon data because the data will be huge and our system will need it. The biggest challenge will be getting this data and saving it somehow. It is a finite list so we can save it locally in SQLite or something. Since it will not change and any updates can be done manually, we do not need an external database.  
+  
+This can be a single application in memory or an in-memory database that has all this information. I leave that decision to you. This is what I want to build. Let’s brainstorm what this should be: UI, backend, and what we want it to do.  
+  
+The main thing I want is for people to be able to select the top Pokémon (top 1, top 3, up to top 10) in any categories they like. A category filter will help them reduce the subject list or tournament participants from all Pokémon to a certain number, including Megas (by the way Megas is a type so we can add that in the type options).  
+  
+Even a builder app that does all of this. I think today with AI it should be possible to do it pretty quickly. The only problem I see is brainstorming the UI/UX and what features we want to add, and more important than that is the data and how we can get that data. This is the initial problem that I have in mind. Feel free to suggest things; let’s brainstorm and do this together. I want to push this today.
