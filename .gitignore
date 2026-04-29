@@ -10,6 +10,9 @@ build/
 apps/api/bin/
 apps/api/tmp/
 
+# TypeScript incremental build cache
+*.tsbuildinfo
+
 # Environment
 .env
 .env.local
