@@ -1,0 +1,138 @@
+# Pokemon Ranker — editorial tag overlay.
+#
+# Pokémon are identified by their species slug as it appears in PokeAPI
+# (e.g., "charizard"). Form-specific entries (e.g., "charizard-mega-x")
+# are also valid and necessary for tags that apply only to specific forms
+# (mega, gmax, regional-variant, fusion).
+#
+# Each tag groups Pokemon (the competitor unit, see DECISIONS.md D-1) into
+# community-recognized categories. Tags are non-exclusive — a Pokémon can
+# carry multiple tags (e.g., Mewtwo is `legendary` AND has Megas tagged
+# `mega`).
+#
+# Conventions:
+#   - List entries are sorted by Pokédex number, then form.
+#   - When a tag applies to a whole species (all forms), use the species slug.
+#   - When a tag applies only to specific forms, use the form-qualified slug.
+#
+# This file is the source of truth for community tags. Adding or removing
+# a tag goes through PR review (see .claude/agents/data-sync.md).
+
+version: 1
+
+tags:
+  legendary:
+    # Officially classified by The Pokémon Company.
+    description: Officially-classified legendary species.
+    members: []  # Phase 1 fills this in via the data-sync agent.
+
+  mythical:
+    description: Event-distributed legendaries (Mew, Celebi, Jirachi, Arceus, etc.).
+    members: []
+
+  sub_legendary:
+    description: Trio members and minor legendaries (Articuno, Cobalion, etc.).
+    members: []
+
+  pseudo_legendary:
+    description: BST 600, three-stage, late evolution (Dragonite, Tyranitar, Garchomp, etc.).
+    members:
+      - dragonite
+      - tyranitar
+      - salamence
+      - metagross
+      - garchomp
+      - hydreigon
+      - goodra
+      - kommo-o
+      - dragapult
+      - baxcalibur
+
+  starter:
+    description: Regional-professor first-stage Pokémon and their evolutions.
+    members: []
+
+  fossil:
+    description: Species revived from fossils.
+    members: []
+
+  baby:
+    description: Pre-evolved forms hatched from eggs (Gen 2+).
+    members: []
+
+  ultra_beast:
+    description: Gen 7 inter-dimensional Pokémon.
+    members: []
+
+  paradox:
+    description: Gen 9 past/future variants with Protosynthesis or Quark Drive.
+    members: []
+
+  regional_variant:
+    description: Alolan, Galarian, Hisuian, Paldean forms of pre-existing species.
+    members: []
+
+  mega:
+    description: Mega Evolution forms (form-qualified slugs only).
+    members: []
+
+  gmax:
+    description: Gigantamax forms (form-qualified slugs only).
+    members: []
+
+  fusion:
+    description: Forms created by combining two species (Black/White Kyurem, etc.).
+    members: []
+
+  # ---------------------------------------------------------------------------
+  # Thematic-design overlay (added 2026-04-28 per PL-6).
+  #
+  # These tags drive D-8 Vibes-mode filters in Phase 4. They are *descriptive*
+  # categorical body archetypes, not subjective aesthetics. Subjective tags
+  # (cute / cool / scary / iconic) are deferred to community-curated overlays
+  # post-Phase 7 to avoid bike-shedding.
+  #
+  # Members are populated in Phase 1.D by the data-sync agent. Each Pokemon
+  # may carry multiple thematic tags (e.g., Lapras is both `aquatic` and
+  # `quadruped`-coded; Onix is `serpent` and `armored`).
+  # ---------------------------------------------------------------------------
+
+  thematic_humanoid:
+    description: Bipedal humanoid body shape (Mr. Mime, Hitmonchan, Machamp, Gardevoir, ...).
+    members: []
+
+  thematic_quadruped:
+    description: Four-legged mammalian body shape (Arcanine, Stoutland, Boltund, ...).
+    members: []
+
+  thematic_serpent:
+    description: Long-bodied serpentine forms (Onix, Steelix, Dragonair, Ekans, Seviper, ...).
+    members: []
+
+  thematic_aquatic:
+    description: Aquatic-mammal or fish-shaped designs (Lapras, Dewgong, Spheal, Wailord, ...).
+    members: []
+
+  thematic_avian:
+    description: Bird / winged-flyer designs (Pidgey line, Talonflame, Swellow, Corviknight, ...).
+    members: []
+
+  thematic_mecha:
+    description: Mechanical / robotic designs (Magearna, Genesect, Klink, Magnemite, Rotom-Wash, ...).
+    members: []
+
+  thematic_round:
+    description: Round, blob-shaped designs (Jigglypuff, Whiscash, Wailord, Munchlax, Swalot, ...).
+    members: []
+
+  thematic_armored:
+    description: Heavily-armored / shelled designs (Donphan, Shieldon, Drampa, Aggron, Carracosta, ...).
+    members: []
+
+  thematic_ghost_humanoid:
+    description: Spectral or wraith-like humanoids (Mismagius, Drifblim, Banette, Dusknoir, ...).
+    members: []
+
+  thematic_dragon_classic:
+    description: Classical Western-dragon body shape (Dragonite, Salamence, Hydreigon, Goodra-Hisuian, ...).
+    members: []

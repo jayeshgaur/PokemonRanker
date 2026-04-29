@@ -1,0 +1,21 @@
+{
+  "id": 1,
+  "name": "pound",
+  "type": {"name": "normal", "url": "https://pokeapi.co/api/v2/type/1/"},
+  "damage_class": {"name": "physical", "url": "https://pokeapi.co/api/v2/move-damage-class/2/"},
+  "power": 40,
+  "accuracy": 100,
+  "pp": 35,
+  "priority": 0,
+  "target": {"name": "selected-pokemon", "url": "https://pokeapi.co/api/v2/move-target/10/"},
+  "names": [
+    {"language": {"name": "en", "url": "https://pokeapi.co/api/v2/language/9/"}, "name": "Pound"}
+  ],
+  "effect_entries": [
+    {
+      "effect": "Inflicts regular damage with no additional effect.",
+      "short_effect": "Inflicts regular damage.",
+      "language": {"name": "en", "url": "https://pokeapi.co/api/v2/language/9/"}
+    }
+  ]
+}

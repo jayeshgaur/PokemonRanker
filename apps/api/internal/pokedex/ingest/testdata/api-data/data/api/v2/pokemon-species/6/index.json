@@ -1,0 +1,50 @@
+{
+  "id": 6,
+  "name": "charizard",
+  "order": 7,
+  "gender_rate": 1,
+  "capture_rate": 45,
+  "base_happiness": 50,
+  "is_baby": false,
+  "is_legendary": false,
+  "is_mythical": false,
+  "hatch_counter": 20,
+  "has_gender_differences": false,
+  "forms_switchable": false,
+  "growth_rate": {"name": "medium-slow", "url": "https://pokeapi.co/api/v2/growth-rate/4/"},
+  "pokedex_numbers": [
+    {"entry_number": 6, "pokedex": {"name": "national", "url": "https://pokeapi.co/api/v2/pokedex/1/"}},
+    {"entry_number": 6, "pokedex": {"name": "kanto", "url": "https://pokeapi.co/api/v2/pokedex/2/"}}
+  ],
+  "egg_groups": [
+    {"name": "monster", "url": "https://pokeapi.co/api/v2/egg-group/1/"},
+    {"name": "dragon", "url": "https://pokeapi.co/api/v2/egg-group/14/"}
+  ],
+  "color": {"name": "red", "url": "https://pokeapi.co/api/v2/pokemon-color/8/"},
+  "shape": {"name": "upright", "url": "https://pokeapi.co/api/v2/pokemon-shape/6/"},
+  "evolves_from_species": {"name": "charmeleon", "url": "https://pokeapi.co/api/v2/pokemon-species/5/"},
+  "evolution_chain": {"url": "https://pokeapi.co/api/v2/evolution-chain/2/"},
+  "habitat": null,
+  "generation": {"name": "generation-i", "url": "https://pokeapi.co/api/v2/generation/1/"},
+  "names": [
+    {"language": {"name": "en", "url": "https://pokeapi.co/api/v2/language/9/"}, "name": "Charizard"},
+    {"language": {"name": "ja-Hrkt", "url": "https://pokeapi.co/api/v2/language/1/"}, "name": "リザードン"}
+  ],
+  "flavor_text_entries": [
+    {
+      "flavor_text": "Spits fire that\nis hot enough to\nmelt boulders.\fKnown to cause\nforest fires\nunintentionally.",
+      "language": {"name": "en", "url": "https://pokeapi.co/api/v2/language/9/"},
+      "version": {"name": "red", "url": "https://pokeapi.co/api/v2/version/1/"}
+    }
+  ],
+  "form_descriptions": [],
+  "genera": [
+    {"genus": "Flame Pokémon", "language": {"name": "en", "url": "https://pokeapi.co/api/v2/language/9/"}}
+  ],
+  "varieties": [
+    {"is_default": true, "pokemon": {"name": "charizard", "url": "https://pokeapi.co/api/v2/pokemon/6/"}},
+    {"is_default": false, "pokemon": {"name": "charizard-mega-x", "url": "https://pokeapi.co/api/v2/pokemon/10034/"}},
+    {"is_default": false, "pokemon": {"name": "charizard-mega-y", "url": "https://pokeapi.co/api/v2/pokemon/10035/"}},
+    {"is_default": false, "pokemon": {"name": "charizard-gmax", "url": "https://pokeapi.co/api/v2/pokemon/10196/"}}
+  ]
+}
