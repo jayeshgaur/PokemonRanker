@@ -199,5 +199,45 @@ func Validate(ctx context.Context, db *sql.DB) ([]ValidationIssue, error) {
 	}
 	check("pokemon_is_default_matches_form_is_default", "0", fmt.Sprint(defaultMismatch), defaultMismatch == 0, "")
 
+	// 17. Regional variants are stamped with their region's debut generation,
+	// not their species's. Catches the bug fixed 2026-04-29 where Hisuian
+	// Arcanine was returning under "Generation 1" because pokemon.generation_id
+	// fell back to species.generation_id (Arcanine = Gen 1) instead of using
+	// the form's introduction (Hisuian forms = Gen 8). Each pin is a worked
+	// canonical example; if any drift, the whole regional-variant pipeline is
+	// suspect.
+	regionalPins := []struct {
+		slug    string
+		wantGen int
+	}{
+		{"raichu-alola", 7},
+		{"slowbro-galar", 8},
+		{"arcanine-hisui", 8},
+		{"typhlosion-hisui", 8},
+		{"tauros-paldea-combat-breed", 9},
+	}
+	for _, pin := range regionalPins {
+		var gen int
+		err := db.QueryRowContext(ctx,
+			`SELECT generation_id FROM pokemon WHERE slug = ?`, pin.slug,
+		).Scan(&gen)
+		if err == sql.ErrNoRows {
+			// Some forms exist in PokeAPI but not in api-data yet. Skip — the
+			// "every regional variant is non-default" check above catches the
+			// row-existence problem; this check is for gen correctness only.
+			continue
+		}
+		if err != nil {
+			return nil, fmt.Errorf("lookup regional variant %s: %w", pin.slug, err)
+		}
+		check(
+			"regional_variant_generation:"+pin.slug,
+			fmt.Sprint(pin.wantGen),
+			fmt.Sprint(gen),
+			gen == pin.wantGen,
+			"",
+		)
+	}
+
 	return issues, nil
 }

@@ -8,10 +8,11 @@ import (
 // PokemonIngester populates the `pokemon` table from
 // `data/api/v2/pokemon/<id>/index.json` files. The competitor unit (D-1).
 //
-// generation_id is currently sourced from species.generation_id (the
-// pokemon's species's debut generation). Future enhancement: use
-// COALESCE(forms.introduced_in_generation_id, species.generation_id) once
-// forms tracks introduction generation.
+// generation_id is COALESCE(forms.introduced_in_generation_id,
+// species.generation_id). For default forms the species's debut generation
+// is canonical; for non-default forms (Megas, regional variants, GMax, …)
+// FormIngester writes the form's introduction generation. This is what
+// makes "Gen 1" filters return Kantonian Raichu and not Alolan Raichu.
 type PokemonIngester struct{}
 
 // Name implements Ingester.
@@ -69,15 +70,21 @@ func (PokemonIngester) Ingest(ctx context.Context, db DBExecutor, apiDataPath st
 			res.Notes = append(res.Notes, formNote)
 		}
 
-		// Look up generation_id and species slug from the species table.
+		// generation_id = COALESCE(forms.introduced_in_generation_id,
+		// species.generation_id). Joins to both tables in one read.
 		var (
 			generationID int64
 			speciesSlug  string
 		)
-		if err := db.QueryRowContext(ctx,
-			`SELECT generation_id, slug FROM species WHERE id = ?`, speciesID,
+		if err := db.QueryRowContext(ctx, `
+			SELECT COALESCE(f.introduced_in_generation_id, s.generation_id) AS generation_id,
+			       s.slug
+			FROM species s
+			LEFT JOIN forms f ON f.id = ?
+			WHERE s.id = ?
+		`, formID, speciesID,
 		).Scan(&generationID, &speciesSlug); err != nil {
-			return res, fmt.Errorf("lookup species %d for pokemon %d: %w", speciesID, p.ID, err)
+			return res, fmt.Errorf("lookup species/form for pokemon %d: %w", p.ID, err)
 		}
 
 		pokemonDBURL := "https://pokemondb.net/pokedex/" + speciesSlug

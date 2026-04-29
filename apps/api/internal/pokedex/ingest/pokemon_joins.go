@@ -40,23 +40,6 @@ type pokemonJoinsJSON struct {
 	} `json:"moves"`
 }
 
-// versionGroupGeneration maps PokeAPI version_group slugs to the generation_id
-// they belong to. Hardcoded because version groups are stable and avoiding a
-// per-row read of /version-group/<id>/ is a major performance win.
-var versionGroupGeneration = map[string]int64{
-	"red-blue": 1, "yellow": 1,
-	"gold-silver": 2, "crystal": 2,
-	"ruby-sapphire": 3, "emerald": 3, "firered-leafgreen": 3,
-	"colosseum": 3, "xd": 3,
-	"diamond-pearl": 4, "platinum": 4, "heartgold-soulsilver": 4,
-	"black-white": 5, "black-2-white-2": 5,
-	"x-y": 6, "omega-ruby-alpha-sapphire": 6,
-	"sun-moon": 7, "ultra-sun-ultra-moon": 7, "lets-go-pikachu-lets-go-eevee": 7,
-	"sword-shield": 8, "the-isle-of-armor": 8, "the-crown-tundra": 8,
-	"brilliant-diamond-and-shining-pearl": 8, "legends-arceus": 8,
-	"scarlet-violet": 9, "the-teal-mask": 9, "the-indigo-disk": 9,
-}
-
 // Ingest implements Ingester.
 func (PokemonJoinsIngester) Ingest(ctx context.Context, db DBExecutor, apiDataPath string) (IngestResult, error) {
 	res := IngestResult{RowCounts: map[string]int{}}
@@ -137,7 +120,7 @@ func (PokemonJoinsIngester) Ingest(ctx context.Context, db DBExecutor, apiDataPa
 				return res, fmt.Errorf("pokemon %d move id: %w", p.ID, err)
 			}
 			for _, vgd := range m.VersionGroupDetails {
-				genID, ok := versionGroupGeneration[vgd.VersionGroup.Name]
+				genID, ok := VersionGroupGeneration[vgd.VersionGroup.Name]
 				if !ok {
 					res.Notes = append(res.Notes, fmt.Sprintf(
 						"unknown version_group %q on pokemon %d move %d (skipped)",

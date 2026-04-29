@@ -138,6 +138,26 @@ func englishEffect(entries []EffectEntry) (short, long string) {
 	return "", ""
 }
 
+// VersionGroupGeneration maps PokeAPI version_group slugs to the generation_id
+// they belong to. Hardcoded because version groups are stable and avoiding a
+// per-row read of /version-group/<id>/ is a major performance win. Used by
+// PokemonJoinsIngester (pokemon_moves rows) and FormIngester (form
+// introduction generation — the fix for "Hisuian Arcanine showed up under
+// Gen 1" reported 2026-04-29).
+var VersionGroupGeneration = map[string]int64{
+	"red-blue": 1, "yellow": 1,
+	"gold-silver": 2, "crystal": 2,
+	"ruby-sapphire": 3, "emerald": 3, "firered-leafgreen": 3,
+	"colosseum": 3, "xd": 3,
+	"diamond-pearl": 4, "platinum": 4, "heartgold-soulsilver": 4,
+	"black-white": 5, "black-2-white-2": 5,
+	"x-y": 6, "omega-ruby-alpha-sapphire": 6,
+	"sun-moon": 7, "ultra-sun-ultra-moon": 7, "lets-go-pikachu-lets-go-eevee": 7,
+	"sword-shield": 8, "the-isle-of-armor": 8, "the-crown-tundra": 8,
+	"brilliant-diamond-and-shining-pearl": 8, "legends-arceus": 8,
+	"scarlet-violet": 9, "the-teal-mask": 9, "the-indigo-disk": 9,
+}
+
 // titleFromSlug converts a PokeAPI slug ("generation-i", "ultra-beast") to a
 // space-separated Title-Case display name as a fallback when no English
 // localized name is available.

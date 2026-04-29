@@ -29,6 +29,15 @@ type formJSON struct {
 	IsMega       bool            `json:"is_mega"`
 	Names        []LocalizedName `json:"names"`
 	Pokemon      NameURL         `json:"pokemon"`
+	// VersionGroup carries the games where the form first/most-recently
+	// appears. For non-default forms (Megas, regional variants, GMax,
+	// battle-bond, …) this maps cleanly to the introduction generation
+	// (e.g. arcanine-hisui's version_group = "legends-arceus" → Gen 8).
+	// For default forms it tracks the latest game the sprite was updated
+	// in, so we ignore it for those and fall back to species's debut
+	// generation. This is the fix for "Hisuian Arcanine appeared under
+	// Gen 1 filter" reported 2026-04-29.
+	VersionGroup NameURL `json:"version_group"`
 }
 
 // regionalFormNames are the PokeAPI form_name values that mark a regional variant.
@@ -68,12 +77,20 @@ func (FormIngester) Ingest(ctx context.Context, db DBExecutor, apiDataPath strin
 		isRegional := regionalFormNames[f.FormName]
 		isSpeciesDefault := f.IsDefault && pokemonIsDefault
 
+		// Resolve form's introduction generation. For non-default forms
+		// (regional variants, Megas, GMax, battle-bond, …) the form's
+		// version_group is the introduction; we map that to a generation.
+		// Default forms inherit their species's debut gen (handled via
+		// COALESCE in PokemonIngester) so we leave the column NULL here.
+		introGen, hasIntroGen := formIntroductionGen(f, isSpeciesDefault)
+
 		if _, err := db.ExecContext(ctx, `
 			INSERT INTO forms (
 				id, species_id, slug, form_name,
 				is_default, is_mega, is_gmax, is_battle_only, is_regional_variant,
+				introduced_in_generation_id,
 				pokeapi_order, pokeapi_form_order
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		`,
 			f.ID,
 			speciesID,
@@ -84,6 +101,7 @@ func (FormIngester) Ingest(ctx context.Context, db DBExecutor, apiDataPath strin
 			boolToInt(isGmax),
 			boolToInt(f.IsBattleOnly),
 			boolToInt(isRegional),
+			nullableInt64(introGen, hasIntroGen),
 			f.Order,
 			f.FormOrder,
 		); err != nil {
@@ -93,6 +111,43 @@ func (FormIngester) Ingest(ctx context.Context, db DBExecutor, apiDataPath strin
 	}
 
 	return res, nil
+}
+
+// formIntroductionGen returns the form's introduction generation, or
+// (0, false) when we don't have one to write.
+//
+//   - Default forms (the species's canonical (species, form) row): we leave
+//     this NULL so PokemonIngester's COALESCE falls back to the species's
+//     debut generation. The form's `version_group` for default forms tracks
+//     latest-sprite-update, not introduction, so it's the wrong source.
+//   - Non-default forms (Mega/GMax/regional/battle-bond/…): the form's
+//     `version_group` IS the introduction, mapped via VersionGroupGeneration.
+//   - Unknown version_group: return (0, false). The caller writes NULL and
+//     falls back to species. We don't loud-fail here because PokeAPI ships
+//     pre-release / fan-fic version groups occasionally; missing the gen
+//     just means the form inherits its species's debut gen, which is the
+//     same conservative behavior we had before this fix.
+func formIntroductionGen(f formJSON, isSpeciesDefault bool) (int64, bool) {
+	if isSpeciesDefault {
+		return 0, false
+	}
+	if f.VersionGroup.Name == "" {
+		return 0, false
+	}
+	gen, ok := VersionGroupGeneration[f.VersionGroup.Name]
+	if !ok {
+		return 0, false
+	}
+	return gen, true
+}
+
+// nullableInt64 returns the value as `any(int64)` when ok, else untyped nil
+// so the SQL driver writes NULL.
+func nullableInt64(v int64, ok bool) any {
+	if !ok {
+		return nil
+	}
+	return v
 }
 
 // lookupPokemonForForm reads a pokemon entity JSON and returns:
