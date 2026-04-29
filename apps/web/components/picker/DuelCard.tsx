@@ -120,14 +120,29 @@ function Card({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const sprite = pokemon.officialArtworkUrl || pokemon.spriteUrl;
 
+  // Re-bind the cached <Audio> to the *current* pokémon's cry whenever the
+  // duel changes. Without this, React reuses the same Card component
+  // instance across duels (only props change), and `audioRef.current` keeps
+  // the first pokémon's Audio object forever — the bug reported 2026-04-29:
+  // "same sound for all left pokémon, a different but always-same sound for
+  // all right pokémon."
+  useEffect(() => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+      audioRef.current.volume = 0.3;
+      audioRef.current.preload = "auto";
+    }
+    if (pokemon.cryUrl && audioRef.current.src !== pokemon.cryUrl) {
+      audioRef.current.src = pokemon.cryUrl;
+    }
+  }, [pokemon.cryUrl]);
+
   function playCry() {
     if (!audioEnabled || !pokemon.cryUrl) return;
-    if (!audioRef.current) {
-      audioRef.current = new Audio(pokemon.cryUrl);
-      audioRef.current.volume = 0.3;
-    }
-    audioRef.current.currentTime = 0;
-    audioRef.current.play().catch(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = 0;
+    audio.play().catch(() => {
       // Autoplay restrictions or load failure — fail silently.
     });
   }
