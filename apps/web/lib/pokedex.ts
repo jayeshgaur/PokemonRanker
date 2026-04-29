@@ -29,6 +29,15 @@ let cachedDbPath: string | null = null;
 function dbPath(): string {
   if (process.env.POKEDEX_DB_PATH) return process.env.POKEDEX_DB_PATH;
   const candidates = [
+    // Production / Vercel: the SQLite is bundled with the web app via
+    // next.config.ts `outputFileTracingIncludes`. cwd on a Vercel
+    // serverless function points at the Next.js project root (apps/web).
+    path.join(process.cwd(), "data", "pokedex.sqlite"),
+    // Local dev (cwd = apps/web from `next dev`).
+    path.join(process.cwd(), "..", "..", "apps", "web", "data", "pokedex.sqlite"),
+    // Local dev (cwd = repo root from `make web`).
+    path.join(process.cwd(), "apps", "web", "data", "pokedex.sqlite"),
+    // Legacy: the freshly-built api-side artifact (kept for `make sync` flow).
     path.join(process.cwd(), "..", "api", "data", "pokedex.sqlite"),
     path.join(process.cwd(), "apps", "api", "data", "pokedex.sqlite"),
   ];

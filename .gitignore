@@ -45,6 +45,10 @@ apps/api/data/pokedex.sqlite.tmp
 apps/api/data/pokedex.sqlite.lock
 apps/api/data/api-data/
 # api-data-sha is committed (pin file for reproducibility per PM planning gate, 2026-04-28).
+# apps/web/data/pokedex.sqlite IS committed — it's the deploy artifact bundled
+# into the Vercel serverless function. Refresh via `make publish-db`.
+apps/web/data/pokedex.sqlite-journal
+apps/web/data/pokedex.sqlite.tmp
 
 # Hook scratchpad (logs, timestamps)
 .claude/state/

@@ -24,6 +24,30 @@ make all
 
 See the `Makefile` for the full target list (`make help`).
 
+## Deploying to Vercel (free)
+
+Per D-22 the app is a single Vercel Hobby deploy — no recurring cost.
+
+1. **Push the deploy artifact.** The Pokédex SQLite at `apps/web/data/pokedex.sqlite` is what the Next.js serverless function reads. Refresh it whenever you re-sync:
+   ```sh
+   make sync-from-clone   # pull latest PokeAPI data + rebuild SQLite
+   make publish-db        # copy into apps/web/data/
+   git add apps/web/data/pokedex.sqlite && git commit && git push
+   ```
+
+2. **First-time Vercel setup.** At [vercel.com](https://vercel.com):
+   - Sign in with GitHub.
+   - **Add New → Project** → import `PokemonRanker`.
+   - **Root Directory:** `apps/web` (Vercel will auto-detect Next.js + pnpm workspaces).
+   - **Framework Preset:** Next.js (auto-detected).
+   - **Build Command, Install Command, Output Directory:** leave defaults.
+   - **Environment variables:** none needed for v1.
+   - Click **Deploy**.
+
+3. **Subsequent deploys** auto-fire on every push to `main`.
+
+The /pick route is server-rendered on demand (SQLite read at request time, ~50 ms cold). Sprites and cries hot-link from `raw.githubusercontent.com` so Vercel's bandwidth budget isn't touched. Phase 4.5 will add an Anthropic API key as the first paid line item; v1 stays $0.
+
 ## Documents
 
 Read these in order:

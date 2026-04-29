@@ -29,6 +29,12 @@ api-data-pull: ## Clone or update PokeAPI/api-data (~557 MB shallow clone)
 sync-validate: ## Run post-sync data sanity-check suite against the local SQLite
 	cd apps/api && go run ./cmd/pokedex-sync validate --db data/pokedex.sqlite
 
+publish-db: ## Copy the freshly-built SQLite into apps/web/data for Vercel deploy
+	@if [ ! -f apps/api/data/pokedex.sqlite ]; then echo "Run 'make sync-from-clone' first."; exit 1; fi
+	mkdir -p apps/web/data
+	cp apps/api/data/pokedex.sqlite apps/web/data/pokedex.sqlite
+	@echo "Published $$(du -h apps/web/data/pokedex.sqlite | awk '{print $$1}') SQLite to apps/web/data/. Commit and push to redeploy."
+
 sync-inspect: ## Show row counts, latest sync_meta, and sample rows from the local SQLite
 	@if [ ! -f apps/api/data/pokedex.sqlite ]; then echo "Run 'make sync' first."; exit 1; fi
 	@echo "=== Row counts ==="
